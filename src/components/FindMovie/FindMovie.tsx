@@ -30,13 +30,9 @@ export const FindMovie: React.FC<Props> = ({ setMovies }) => {
     try {
       const data = await getMovie(value);
 
-      if ('Response' in data && data.Response == 'False') {
+      if ('Response' in data && data.Response === 'False') {
         setError(true);
-        setIsLoading(false);
       } else {
-        setError(false);
-        setIsLoading(false);
-
         const normalizedMovie: Movie = {
           title: (data as MovieData).Title,
           description: (data as MovieData).Plot,
@@ -52,27 +48,28 @@ export const FindMovie: React.FC<Props> = ({ setMovies }) => {
       }
     } catch (err) {
       setError(true);
+      setValue('');
     } finally {
-      setIsLoading(false);
+      setIsLoading(false); // Guarantees loading state reset
     }
   };
 
   const handleAddMovie = () => {
-    setValue('');
-    setMovie(null);
     if (!movie) {
       return;
     }
 
     setMovies(prev => {
-      if (prev.some(m => m.imdbId === movie?.imdbId)) {
+      if (prev.some(m => m.imdbId === movie.imdbId)) {
         return prev;
       }
 
       return [...prev, movie];
     });
 
-    inputRef?.current?.focus();
+    setMovie(null); // Clear the movie state
+    setValue(''); // Reset the input field
+    inputRef?.current?.focus(); // Bring focus back to the input field
   };
 
   return (
@@ -90,7 +87,7 @@ export const FindMovie: React.FC<Props> = ({ setMovies }) => {
               type="text"
               id="movie-title"
               placeholder="Enter a title to search"
-              className={`input ${error ? 'is-danger' : ''} `}
+              className={`input ${error ? 'is-danger' : ''}`}
               value={value}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                 setValue(e.target.value);
