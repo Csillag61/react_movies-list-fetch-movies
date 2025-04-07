@@ -24,6 +24,8 @@ export const FindMovie: React.FC<Props> = ({ setMovies }) => {
     setIsLoading(true);
 
     if (value.trim() === '') {
+      setIsLoading(false);
+
       return;
     }
 
@@ -32,6 +34,7 @@ export const FindMovie: React.FC<Props> = ({ setMovies }) => {
 
       if ('Response' in data && data.Response === 'False') {
         setError(true);
+        setMovie(null); // Clear the movie state
       } else {
         const normalizedMovie: Movie = {
           title: (data as MovieData).Title,
@@ -48,7 +51,7 @@ export const FindMovie: React.FC<Props> = ({ setMovies }) => {
       }
     } catch (err) {
       setError(true);
-      setValue('');
+      setMovie(null); // Clear the movie state');
     } finally {
       setIsLoading(false); // Guarantees loading state reset
     }
